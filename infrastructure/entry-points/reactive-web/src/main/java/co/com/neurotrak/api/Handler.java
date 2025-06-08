@@ -1,5 +1,7 @@
 package co.com.neurotrak.api;
 
+import co.com.neurotrak.api.resource.FranchiseResource;
+import co.com.neurotrak.api.response.FranchiseResponse;
 import co.com.neurotrak.usecase.franchise.FranchiseUseCase;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -10,12 +12,13 @@ import reactor.core.publisher.Mono;
 @Component
 @RequiredArgsConstructor
 public class Handler {
-
     private final FranchiseUseCase useCase;
 
     public Mono<ServerResponse> listenGETUseCase(ServerRequest serverRequest) {
-        // useCase.logic();
-        return ServerResponse.ok().bodyValue(useCase.getFranchises());
+        return useCase
+                .getFranchises()
+                .flatMap(FranchiseResponse::ok)
+                .onErrorResume(Mono::error);
     }
 
     public Mono<ServerResponse> listenGETOtherUseCase(ServerRequest serverRequest) {

@@ -24,3 +24,7 @@ include ':mongo-repository'
 project(':mongo-repository').projectDir = file('./infrastructure/driven-adapters/mongo-repository')
 include ':reactive-web'
 project(':reactive-web').projectDir = file('./infrastructure/entry-points/reactive-web')
+include ':franchise-helper'
+project(':franchise-helper').projectDir = file('./infrastructure/helpers/franchise-helper')
+include ':resource'
+project(':resource').projectDir = file('./infrastructure/helpers/resource')
