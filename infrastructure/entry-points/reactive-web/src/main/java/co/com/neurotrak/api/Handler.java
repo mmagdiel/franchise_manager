@@ -14,21 +14,50 @@ import reactor.core.publisher.Mono;
 public class Handler {
     private final FranchiseUseCase useCase;
 
-    public Mono<ServerResponse> listenGETUseCase(ServerRequest serverRequest) {
+    public Mono<ServerResponse> listenIndexFranchise(ServerRequest serverRequest) {
         return useCase
-                .getFranchises()
-                .flatMap(FranchiseResponse::ok)
+                .index()
+                .flatMap(FranchiseResponse::index)
                 .onErrorResume(Mono::error);
     }
 
-    public Mono<ServerResponse> listenPOSTUseCase(ServerRequest serverRequest) {
+    public Mono<ServerResponse> listenShowFranchise(ServerRequest serverRequest) {
+        String uuid = serverRequest.pathVariable("uuid");
+        if (uuid.isEmpty() || uuid.trim().isEmpty()) {
+            return ServerResponse.badRequest().bodyValue("There aren't uuid");
+        }
+        return useCase
+                .show(uuid)
+                .flatMap(FranchiseResponse::show)
+                .onErrorResume(Mono::error);
+    }
+
+    public Mono<ServerResponse> listenStoreFranchise(ServerRequest serverRequest) {
         return serverRequest.bodyToMono(JsonNode.class)
                 .flatMap(jsonNode -> {
                     String name = jsonNode.get("name").asText();
                     if (name.isEmpty() || name.trim().isEmpty()) {
                         throw new Error("Bad request");
                     }
-                    return useCase.save(name).flatMap(FranchiseResponse::create);
+                    return useCase.store(name).flatMap(FranchiseResponse::store);
+                }).onErrorResume(FranchiseResponse::error);
+    }
+
+    public Mono<ServerResponse> listenIndexSubsidiary(ServerRequest serverRequest) {
+        return useCase
+                .index()
+                .flatMap(FranchiseResponse::index)
+                .onErrorResume(Mono::error);
+    }
+
+    public Mono<ServerResponse> listenStoreSubsidiary(ServerRequest serverRequest) {
+        return serverRequest.bodyToMono(JsonNode.class)
+                .flatMap(jsonNode -> {
+                    String name = jsonNode.get("name").asText();
+                    if (name.isEmpty() || name.trim().isEmpty()) {
+                        throw new Error("Bad request");
+                    }
+                    return useCase.store(name).flatMap(FranchiseResponse::store);
                 }).onErrorResume(FranchiseResponse::error);
     }
 }

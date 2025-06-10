@@ -7,18 +7,20 @@ import co.com.neurotrak.model.franchise.Franchise;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.reactive.function.server.ServerResponse;
 import reactor.core.publisher.Mono;
-
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.List;
 
 public class FranchiseResponse {
-    public static Mono<ServerResponse> ok(List<Franchise>  franchise) {
+    public static Mono<ServerResponse> index(List<Franchise>  franchise) {
         FranchiseCollection template = new FranchiseCollection(franchise, HttpStatus.OK.value(), "Operation completed successfully");
         return ServerResponse.ok().bodyValue(template);
     }
 
-    public static Mono<ServerResponse> create(Franchise  franchise) {
+    public static Mono<ServerResponse> show(Franchise franchise) {
+        FranchiseElement template = new FranchiseElement(franchise, HttpStatus.OK.value(), "Operation completed successfully");
+        return ServerResponse.ok().bodyValue(template);
+    }
+
+    public static Mono<ServerResponse> store(Franchise  franchise) {
         FranchiseElement template = new FranchiseElement(franchise, HttpStatus.CREATED.value(), "Operation completed successfully");
         return ServerResponse.ok().bodyValue(template);
     }
